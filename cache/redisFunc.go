@@ -135,19 +135,19 @@ func (p *RedisPool) GetSetInters(key1 string, key2 string) ([]interface{}, error
 func (p *RedisPool) SetExpire(key string, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	return conn.Do("expire", key, ttl)
+	return conn.Do("EXPIRE", key, ttl)
 }
 
 func (p *RedisPool) SetPersist(key string) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	return conn.Do("persist", key)
+	return conn.Do("PERSIST", key)
 }
 
 func (p *RedisPool) GetTTL(key string) (int64, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	return redis.Int64(conn.Do("ttl", key))
+	return redis.Int64(conn.Do("TTL", key))
 }
 
 func (p *RedisPool) SetHashAndExpire(key string, fieldValue map[string]interface{}, ttl int) (interface{}, error) {
@@ -157,11 +157,11 @@ func (p *RedisPool) SetHashAndExpire(key string, fieldValue map[string]interface
 	if err != nil {
 		return i, err
 	}
-	return conn.Do("expire", key, ttl)
+	return conn.Do("EXPIRE", key, ttl)
 }
 
 func (p *RedisPool) SetStringAndExpire(key string, val interface{}, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	return conn.Do("setex", key, ttl, val)
+	return conn.Do("SETEX", key, ttl, val)
 }

@@ -67,12 +67,10 @@ func GetCCPathByCC(ccID string) (string, error) {
 	return ccPath, err
 }
 
-func SetTaskDataHash(taskID int64, vals []map[string]interface{}, timeoutSecond int) error {
-	for _, val := range vals {
-		_, err := GetInstance().SetHashAndExpire(strconv.FormatInt(taskID, 10), val, timeoutSecond)
-		if err != nil {
-			return err
-		}
+func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int) error {
+	_, err := GetInstance().SetHashAndExpire(strconv.FormatInt(taskID, 10), val, timeoutSecond)
+	if err != nil {
+		return err
 	}
 	return nil
 }
