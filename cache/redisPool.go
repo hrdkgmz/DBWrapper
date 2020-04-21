@@ -26,9 +26,9 @@ func GetInstance() *RedisPool {
 	return RdsMan
 }
 
-var _host string = "192.168.110.164:6379"
+var _host string = "127.0.0.1:6379"
 var _pass string = ""
-var _db int = 0
+var _db int = 1 //增量数据同步请使用db0，查询数据缓存请用db1
 var _maxOpens int = 10032
 var _maxIdels int = 300
 
