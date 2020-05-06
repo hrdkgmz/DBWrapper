@@ -1,4 +1,4 @@
-module github.com/hrdkgmz/redigoWrap
+module github.com/hrdkgmz/dbWrapper
 
 go 1.12
 

@@ -67,6 +67,61 @@ func GetCCPathByCC(ccID string) (string, error) {
 	return ccPath, err
 }
 
+func GetChanDetailByName(name string) (map[string]string, error) {
+	channel, err := GetInstance().GetHashMapString("b_channel_info:chan_name:" + name)
+	return channel, err
+}
+
+func GetAllChanName() ([]string, error) {
+	return getSetStringVals("channels")
+}
+
+func GetAllChanDetail() ([]map[string]string, error) {
+	chanNames, err := GetAllChanName()
+	if err != nil {
+		return nil, err
+	}
+	chanDetails := make([]map[string]string, 0)
+	for _, v := range chanNames {
+		chanDetail, err := GetChanDetailByName(v)
+		if err != nil {
+			return nil, err
+		}
+		chanDetails = append(chanDetails, chanDetail)
+	}
+	return chanDetails, nil
+}
+
+func GetCCDetailById(id string) (map[string]string, error) {
+	cc, err := GetInstance().GetHashMapString("b_cc_info:cc_id:" + id)
+	return cc, err
+}
+
+func GetAllCCId() ([]string, error) {
+	return getSetStringVals("ccs")
+}
+
+func GetAllCCDetail() ([]map[string]string, error) {
+	ccIds, err := GetAllCCId()
+	if err != nil {
+		return nil, err
+	}
+	ccDetails := make([]map[string]string, 0)
+	for _, v := range ccIds {
+		ccDetail, err := GetCCDetailById(v)
+		if err != nil {
+			return nil, err
+		}
+		ccDetails = append(ccDetails, ccDetail)
+	}
+	return ccDetails, nil
+}
+
+func GetPeerDetailByName(name string) (map[string]string, error) {
+	peer, err := GetInstance().GetHashMapString("b_peer_info:peer_name:" + name)
+	return peer, err
+}
+
 func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int) error {
 	_, err := GetInstance().SetHashAndExpire(strconv.FormatInt(taskID, 10), val, timeoutSecond)
 	if err != nil {
@@ -92,6 +147,22 @@ func SetTaskDataString(taskID int64, val interface{}, timeoutSecond int) error {
 
 func GetTaskDataString(taskID int64) (val string, err error) {
 	return GetInstance().GetString(strconv.FormatInt(taskID, 10))
+}
+
+func SetTaskDataList(taskID int64, val []string, timeoutSecond int) error {
+	_, err := GetInstance().SetListToTailAndExpire(strconv.FormatInt(taskID, 10), val, timeoutSecond)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetTaskDataListByRange(taskID int64, start int, stop int) (val []string, err error) {
+	return GetInstance().GetListByRange(strconv.FormatInt(taskID, 10), start, stop)
+}
+
+func GetTaskDataListLen(taskID int64) (len int, err error) {
+	return GetInstance().GetListLen(strconv.FormatInt(taskID, 10))
 }
 
 func IsTaskDataTimeout(taskID int64) (bool, error) {

@@ -1,6 +1,8 @@
 package cache
 
-import "github.com/gomodule/redigo/redis"
+import (
+	"github.com/gomodule/redigo/redis"
+)
 
 func (p *RedisPool) Close() error {
 	err := p.Pool.Close()
@@ -67,7 +69,7 @@ func (p *RedisPool) KeysByteSlices(pattern string) ([][]byte, error) {
 	return redis.ByteSlices(conn.Do("KEYS", pattern))
 }
 
-func (p *RedisPool) SetHashMap(key string, fieldValue map[string]interface{}) (interface{}, error) {
+func (p *RedisPool) SetHashMap(key string, fieldValue map[string]string) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
 	return conn.Do("HMSET", redis.Args{}.Add(key).AddFlat(fieldValue)...)
@@ -164,4 +166,172 @@ func (p *RedisPool) SetStringAndExpire(key string, val interface{}, ttl int) (in
 	conn := p.Pool.Get()
 	defer conn.Close()
 	return conn.Do("SETEX", key, ttl, val)
+}
+
+func (p *RedisPool) AppendListToHead(key string, val interface{}) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("LPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("LPUSH", key, val)
+	}
+	return i, err
+}
+
+func (p *RedisPool) SetListToHead(key string, val interface{}) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	v, err := redis.Bool(conn.Do("EXISTS", key))
+	if err != nil {
+		return nil, err
+	}
+	if v == true {
+		i, err = conn.Do("DEL", key)
+		if err != nil {
+			return i, err
+		}
+	}
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("LPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("LPUSH", key, val)
+	}
+	return i, err
+}
+
+func (p *RedisPool) AppendListToHeadAndExpire(key string, val interface{}, ttl int) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("LPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("LPUSH", key, val)
+	}
+	if err != nil {
+		return i, err
+	}
+	return conn.Do("EXPIRE", key, ttl)
+}
+
+func (p *RedisPool) SetListToHeadAndExpire(key string, val interface{}, ttl int) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	v, err := redis.Bool(conn.Do("EXISTS", key))
+	if err != nil {
+		return nil, err
+	}
+	if v == true {
+		i, err = conn.Do("DEL", key)
+		if err != nil {
+			return i, err
+		}
+	}
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("LPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("LPUSH", key, val)
+	}
+	if err != nil {
+		return i, err
+	}
+	return conn.Do("EXPIRE", key, ttl)
+}
+
+func (p *RedisPool) AppendListToTail(key string, val interface{}) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("RPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("RPUSH", key, val)
+	}
+	return i, err
+}
+
+func (p *RedisPool) SetListToTail(key string, val interface{}) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	v, err := redis.Bool(conn.Do("EXISTS", key))
+	if err != nil {
+		return nil, err
+	}
+	if v == true {
+		i, err = conn.Do("DEL", key)
+		if err != nil {
+			return i, err
+		}
+	}
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("RPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("RPUSH", key, val)
+	}
+	return i, err
+}
+
+func (p *RedisPool) AppendListToTailAndExpire(key string, val interface{}, ttl int) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("RPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("RPUSH", key, val)
+	}
+	if err != nil {
+		return i, err
+	}
+	return conn.Do("EXPIRE", key, ttl)
+}
+
+func (p *RedisPool) SetListToTailAndExpire(key string, val interface{}, ttl int) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	var i interface{}
+	var err error
+	v, err := redis.Bool(conn.Do("EXISTS", key))
+	if err != nil {
+		return nil, err
+	}
+	if v == true {
+		i, err = conn.Do("DEL", key)
+		if err != nil {
+			return i, err
+		}
+	}
+	if v, ok := val.([]string); ok {
+		i, err = conn.Do("RPUSH", redis.Args{}.Add(key).AddFlat(v)...)
+	} else {
+		i, err = conn.Do("RPUSH", key, val)
+	}
+	if err != nil {
+		return i, err
+	}
+	return conn.Do("EXPIRE", key, ttl)
+}
+
+func (p *RedisPool) GetListLen(key string) (int, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	return redis.Int(conn.Do("LLEN", key))
+}
+
+func (p *RedisPool) GetListByRange(key string, start int, stop int) ([]string, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	return redis.Strings(conn.Do("LRANGE", key, start, stop))
 }
