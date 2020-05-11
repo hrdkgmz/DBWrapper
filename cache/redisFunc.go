@@ -15,6 +15,12 @@ func (p *RedisPool) Do(command string, args ...interface{}) (interface{}, error)
 	return conn.Do(command, args...)
 }
 
+func (p *RedisPool) Select(db int) (interface{}, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	return conn.Do("select", db)
+}
+
 func (p *RedisPool) SetString(key string, value interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
