@@ -3,10 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/hrdkgmz/dbWrapper/cache"
+	"strconv"
 	"sync"
 	"time"
 )
 func main(){
+
+	result, _ := strconv.ParseInt("srcStr", 10, 64)
+	fmt.Println(result)
 
 	cache.SetRedisParas("172.28.62.228:6379","",1,100,100)
 	//c:=cache.GetInstance()

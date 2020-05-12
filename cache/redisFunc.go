@@ -75,7 +75,7 @@ func (p *RedisPool) KeysByteSlices(pattern string) ([][]byte, error) {
 	return redis.ByteSlices(conn.Do("KEYS", pattern))
 }
 
-func (p *RedisPool) SetHashMap(key string, fieldValue map[string]string) (interface{}, error) {
+func (p *RedisPool) SetHashMap(key string, fieldValue map[string]interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
 	return conn.Do("HMSET", redis.Args{}.Add(key).AddFlat(fieldValue)...)
