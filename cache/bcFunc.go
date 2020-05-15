@@ -15,7 +15,7 @@ func GetFabUserBySysUser(sysUser string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fabUser, err := GetInstance().GetHashString("b_user_info:sys_user:"+sysUser, "fab_user")
+	fabUser, err := GetInstance().GetHashString("b_user_info:hash:sys_user:"+sysUser, "fab_user")
 	return fabUser, err
 }
 
@@ -24,7 +24,7 @@ func GetOrgByFabUser(fabUser string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	org, err := GetInstance().GetHashString("b_user_info:fab_user:"+fabUser, "org_name")
+	org, err := GetInstance().GetHashString("b_user_info:hash:fab_user:"+fabUser, "org_name")
 	return org, err
 }
 
@@ -33,7 +33,7 @@ func GetOrgBySysUser(sysUser string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	org, err := GetInstance().GetHashString("b_user_info:sys_user:"+sysUser, "org_name")
+	org, err := GetInstance().GetHashString("b_user_info:hash:sys_user:"+sysUser, "org_name")
 	return org, err
 }
 
@@ -78,16 +78,25 @@ func GetPeersByCC(ccid string) ([]string, error) {
 	}
 	return getSetStringVals("cc_peers:" + ccid)
 }
+
+func GetChansByCC(ccid string) ([]string, error) {
+	_, err := GetInstance().Select(archiveDb)
+	if err != nil {
+		return nil, err
+	}
+	return getSetStringVals("cc_chans:" + ccid)
+}
+
 func GetCCInfoByCCID(ccid string) (string, string, error) {
 	_, err := GetInstance().Select(archiveDb)
 	if err != nil {
 		return "", "", err
 	}
-	name, err := GetInstance().GetHashString("b_cc_info:cc_id:"+ccid, "cc_name")
+	name, err := GetInstance().GetHashString("b_cc_info:hash:cc_id:"+ccid, "cc_name")
 	if err != nil {
 		return name, "", err
 	}
-	ver, err := GetInstance().GetHashString("b_cc_info:cc_id:"+ccid, "cc_ver")
+	ver, err := GetInstance().GetHashString("b_cc_info:hash:cc_id:"+ccid, "cc_ver")
 	return name, ver, nil
 }
 func GetOrderNames() ([]string, error) {
@@ -103,7 +112,7 @@ func GetChannelTxByChannel(channel string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	channelTxPath, err := GetInstance().GetHashString("b_channel_info:chan_name:"+channel, "channeltx_path")
+	channelTxPath, err := GetInstance().GetHashString("b_channel_info:hash:chan_name:"+channel, "channeltx_path")
 	return channelTxPath, err
 }
 
@@ -112,7 +121,7 @@ func GetCCPathByCC(ccID string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	ccPath, err := GetInstance().GetHashString("b_cc_info:cc_id:"+ccID, "cc_path")
+	ccPath, err := GetInstance().GetHashString("b_cc_info:hash:cc_id:"+ccID, "cc_path")
 	return ccPath, err
 }
 
@@ -121,7 +130,7 @@ func GetChanDetailByName(name string) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	channel, err := GetInstance().GetHashMapString("b_channel_info:chan_name:" + name)
+	channel, err := GetInstance().GetHashMapString("b_channel_info:hash:chan_name:" + name)
 	return channel, err
 }
 
@@ -158,7 +167,7 @@ func GetCCDetailById(id string) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	cc, err := GetInstance().GetHashMapString("b_cc_info:cc_id:" + id)
+	cc, err := GetInstance().GetHashMapString("b_cc_info:hash:cc_id:" + id)
 	return cc, err
 }
 
@@ -195,7 +204,7 @@ func GetPeerDetailByName(name string) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	peer, err := GetInstance().GetHashMapString("b_peer_info:peer_name:" + name)
+	peer, err := GetInstance().GetHashMapString("b_peer_info:hash:peer_name:" + name)
 	return peer, err
 }
 
