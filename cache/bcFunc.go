@@ -204,8 +204,26 @@ func GetPeerDetailByName(name string) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	peer, err := GetInstance().GetHashMapString("b_peer_info:hash:peer_name:" + name)
+	peer, err := GetInstance().GetHashMapString("b_peer_info:hash:peer_fullname:" + name)
 	return peer, err
+}
+
+func GetChanPeerDetail(channel string, peer string) (map[string]string, error) {
+	_, err := GetInstance().Select(archiveDb)
+	if err != nil {
+		return nil, err
+	}
+	chanPeer, err := GetInstance().GetHashMapString("s_channel_peer:hash:chan_name&peer_fullname:" + channel + "&" + peer)
+	return chanPeer, err
+}
+
+func GetPeerJoinTime(channel string, peer string) (string, error) {
+	_, err := GetInstance().Select(archiveDb)
+	if err != nil {
+		return "", err
+	}
+	time, err := GetInstance().GetHashString("s_channel_peer:hash:chan_name&peer_fullname:"+channel+"&"+peer, "join_time")
+	return time, err
 }
 
 func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int) error {

@@ -10,11 +10,16 @@ func main(){
 
 	cache.SetRedisParas("172.28.62.228:6379","",1,100,100)
 	//c:=cache.GetInstance()
-	val,err:= cache.Get
+
+
+
+
+
+	dd,err:= cache.GetPeerJoinTime("mychannel","peer0.org1.example.com")
 	if err!=nil{
 		fmt.Errorf("%s",err)
 	}
-	fmt.Println(val)
+	fmt.Println(dd)
 
 
 	list:=[]string{"4","5","6"}
