@@ -143,12 +143,12 @@ func GetPeerJoinTime(channel string, peer string) (string, error) {
 }
 
 func GetChanCCDetail(channel string, ccid string) (map[string]string, error) {
-	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_channel_cc:hash:chan_name&cc_id"+channel+"&"+ccid)
+	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_channel_cc:hash:chan_name&cc_id:"+channel+"&"+ccid)
 	return chanCc, err
 }
 
 func GetPeerCCDetail(peer string, ccid string) (map[string]string, error) {
-	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_peer_cc:hash:peer_fullname&cc_id"+peer+"&"+ccid)
+	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_peer_cc:hash:peer_fullname&cc_id:"+peer+"&"+ccid)
 	return chanCc, err
 }
 
