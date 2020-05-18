@@ -71,7 +71,7 @@ func GetCommonPeerByOrgChannel(org string, channel string) ([]string, error) {
 	return strVals, err
 }
 
-func GetPeersByCC(ccid string) ([]string, error) {
+func GetPeersByCCID(ccid string) ([]string, error) {
 	_, err := GetInstance().Select(archiveDb)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func GetPeersByCC(ccid string) ([]string, error) {
 	return getSetStringVals("cc_peers:" + ccid)
 }
 
-func GetChansByCC(ccid string) ([]string, error) {
+func GetChansByCCID(ccid string) ([]string, error) {
 	_, err := GetInstance().Select(archiveDb)
 	if err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ func GetChannelTxByChannel(channel string) (string, error) {
 	return channelTxPath, err
 }
 
-func GetCCPathByCC(ccID string) (string, error) {
+func GetCCPathByCCID(ccID string) (string, error) {
 	_, err := GetInstance().Select(archiveDb)
 	if err != nil {
 		return "", err
