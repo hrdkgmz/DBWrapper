@@ -226,6 +226,24 @@ func GetPeerJoinTime(channel string, peer string) (string, error) {
 	return time, err
 }
 
+func GetChanCCDetail(channel string, ccid string) (map[string]string, error) {
+	_, err := GetInstance().Select(archiveDb)
+	if err != nil {
+		return nil, err
+	}
+	chanCc, err := GetInstance().GetHashMapString("s_channel_cc:hash:chan_name&cc_id" + channel + "&" + ccid)
+	return chanCc, err
+}
+
+func GetPeerCCDetail(peer string, ccid string) (map[string]string, error) {
+	_, err := GetInstance().Select(archiveDb)
+	if err != nil {
+		return nil, err
+	}
+	chanCc, err := GetInstance().GetHashMapString("s_peer_cc:hash:peer_fullname&cc_id" + peer + "&" + ccid)
+	return chanCc, err
+}
+
 func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int) error {
 	_, err := GetInstance().Select(taskDb)
 	if err != nil {
