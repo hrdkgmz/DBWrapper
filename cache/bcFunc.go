@@ -11,54 +11,30 @@ const (
 )
 
 func GetFabUserBySysUser(sysUser string) (string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return "", err
-	}
-	fabUser, err := GetInstance().GetHashString("b_user_info:hash:sys_user:"+sysUser, "fab_user")
+	fabUser, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_user_info:hash:sys_user:"+sysUser, "fab_user")
 	return fabUser, err
 }
 
 func GetOrgByFabUser(fabUser string) (string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return "", err
-	}
-	org, err := GetInstance().GetHashString("b_user_info:hash:fab_user:"+fabUser, "org_name")
+	org, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_user_info:hash:fab_user:"+fabUser, "org_name")
 	return org, err
 }
 
 func GetOrgBySysUser(sysUser string) (string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return "", err
-	}
-	org, err := GetInstance().GetHashString("b_user_info:hash:sys_user:"+sysUser, "org_name")
+	org, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_user_info:hash:sys_user:"+sysUser, "org_name")
 	return org, err
 }
 
 func GetPeerByOrg(org string) ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	return getSetStringVals("org_peers:" + org)
 }
 
 func GetPeerByChannel(channel string) ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	return getSetStringVals("chan_peers:" + channel)
 }
 
 func GetCommonPeerByOrgChannel(org string, channel string) ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
-	peer, err := GetInstance().GetSetInters("chan_peers:"+channel, "org_peers:"+org)
+	peer, err := GetInstance().GetSetInterWitchDb(archiveDb, "chan_peers:"+channel, "org_peers:"+org)
 	strVals := make([]string, 0)
 	for _, p := range peer {
 		if str, ok := p.([]uint8); ok {
@@ -72,81 +48,45 @@ func GetCommonPeerByOrgChannel(org string, channel string) ([]string, error) {
 }
 
 func GetPeersByCCID(ccid string) ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	return getSetStringVals("cc_peers:" + ccid)
 }
 
 func GetChansByCCID(ccid string) ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	return getSetStringVals("cc_chans:" + ccid)
 }
 
 func GetCCInfoByCCID(ccid string) (string, string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return "", "", err
-	}
-	name, err := GetInstance().GetHashString("b_cc_info:hash:cc_id:"+ccid, "cc_name")
+	name, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_cc_info:hash:cc_id:"+ccid, "cc_name")
 	if err != nil {
 		return name, "", err
 	}
-	ver, err := GetInstance().GetHashString("b_cc_info:hash:cc_id:"+ccid, "cc_ver")
+	ver, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_cc_info:hash:cc_id:"+ccid, "cc_ver")
 	return name, ver, nil
 }
 func GetOrderNames() ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	return getSetStringVals("orderers")
 }
 
 func GetChannelTxByChannel(channel string) (string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return "", err
-	}
-	channelTxPath, err := GetInstance().GetHashString("b_channel_info:hash:chan_name:"+channel, "channeltx_path")
+	channelTxPath, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_channel_info:hash:chan_name:"+channel, "channeltx_path")
 	return channelTxPath, err
 }
 
 func GetCCPathByCCID(ccID string) (string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return "", err
-	}
-	ccPath, err := GetInstance().GetHashString("b_cc_info:hash:cc_id:"+ccID, "cc_path")
+	ccPath, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_cc_info:hash:cc_id:"+ccID, "cc_path")
 	return ccPath, err
 }
 
 func GetChanDetailByName(name string) (map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
-	channel, err := GetInstance().GetHashMapString("b_channel_info:hash:chan_name:" + name)
+	channel, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_channel_info:hash:chan_name:"+name)
 	return channel, err
 }
 
 func GetAllChanName() ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	return getSetStringVals("channels")
 }
 
 func GetAllChanDetail() ([]map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	chanNames, err := GetAllChanName()
 	if err != nil {
 		return nil, err
@@ -163,27 +103,15 @@ func GetAllChanDetail() ([]map[string]string, error) {
 }
 
 func GetCCDetailById(id string) (map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
-	cc, err := GetInstance().GetHashMapString("b_cc_info:hash:cc_id:" + id)
+	cc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_cc_info:hash:cc_id:"+id)
 	return cc, err
 }
 
 func GetAllCCId() ([]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	return getSetStringVals("ccs")
 }
 
 func GetAllCCDetail() ([]map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
 	ccIds, err := GetAllCCId()
 	if err != nil {
 		return nil, err
@@ -200,56 +128,32 @@ func GetAllCCDetail() ([]map[string]string, error) {
 }
 
 func GetPeerDetailByName(name string) (map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
-	peer, err := GetInstance().GetHashMapString("b_peer_info:hash:peer_fullname:" + name)
+	peer, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_peer_info:hash:peer_fullname:"+name)
 	return peer, err
 }
 
 func GetChanPeerDetail(channel string, peer string) (map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
-	chanPeer, err := GetInstance().GetHashMapString("s_channel_peer:hash:chan_name&peer_fullname:" + channel + "&" + peer)
+	chanPeer, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_channel_peer:hash:chan_name&peer_fullname:"+channel+"&"+peer)
 	return chanPeer, err
 }
 
 func GetPeerJoinTime(channel string, peer string) (string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return "", err
-	}
-	time, err := GetInstance().GetHashString("s_channel_peer:hash:chan_name&peer_fullname:"+channel+"&"+peer, "join_time")
+	time, err := GetInstance().GetHashStringWitchDb(archiveDb, "s_channel_peer:hash:chan_name&peer_fullname:"+channel+"&"+peer, "join_time")
 	return time, err
 }
 
 func GetChanCCDetail(channel string, ccid string) (map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
-	chanCc, err := GetInstance().GetHashMapString("s_channel_cc:hash:chan_name&cc_id" + channel + "&" + ccid)
+	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_channel_cc:hash:chan_name&cc_id"+channel+"&"+ccid)
 	return chanCc, err
 }
 
 func GetPeerCCDetail(peer string, ccid string) (map[string]string, error) {
-	_, err := GetInstance().Select(archiveDb)
-	if err != nil {
-		return nil, err
-	}
-	chanCc, err := GetInstance().GetHashMapString("s_peer_cc:hash:peer_fullname&cc_id" + peer + "&" + ccid)
+	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_peer_cc:hash:peer_fullname&cc_id"+peer+"&"+ccid)
 	return chanCc, err
 }
 
 func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int) error {
-	_, err := GetInstance().Select(taskDb)
-	if err != nil {
-		return err
-	}
-	_, err = GetInstance().SetHashAndExpire(strconv.FormatInt(taskID, 10), val, timeoutSecond)
+	_, err := GetInstance().SetHashAndExpireWitchDb(taskDb, strconv.FormatInt(taskID, 10), val, timeoutSecond)
 	if err != nil {
 		return err
 	}
@@ -257,46 +161,26 @@ func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int
 }
 
 func GetTaskDataHashAll(taskID int64) (vals map[string]string, err error) {
-	_, err = GetInstance().Select(taskDb)
-	if err != nil {
-		return nil, err
-	}
-	return GetInstance().GetHashMapString(strconv.FormatInt(taskID, 10))
+	return GetInstance().GetHashMapStringWitchDb(taskDb, strconv.FormatInt(taskID, 10))
 }
 
 func GetTaskDataHashSingle(taskID int64, field string) (val string, err error) {
-	_, err = GetInstance().Select(taskDb)
-	if err != nil {
-		return "", err
-	}
-	return GetInstance().GetHashString(strconv.FormatInt(taskID, 10), field)
+	return GetInstance().GetHashStringWitchDb(taskDb, strconv.FormatInt(taskID, 10), field)
 }
 
 func SetTaskDataString(taskID int64, val interface{}, timeoutSecond int) error {
-	_, err := GetInstance().Select(taskDb)
-	if err != nil {
-		return err
-	}
-	if _, err := GetInstance().SetStringAndExpire(strconv.FormatInt(taskID, 10), val, timeoutSecond); err != nil {
+	if _, err := GetInstance().SetStringAndExpireWitchDb(taskDb, strconv.FormatInt(taskID, 10), val, timeoutSecond); err != nil {
 		return err
 	}
 	return nil
 }
 
 func GetTaskDataString(taskID int64) (val string, err error) {
-	_, err = GetInstance().Select(taskDb)
-	if err != nil {
-		return "", err
-	}
-	return GetInstance().GetString(strconv.FormatInt(taskID, 10))
+	return GetInstance().GetStringWitchDb(taskDb, strconv.FormatInt(taskID, 10))
 }
 
 func SetTaskDataList(taskID int64, val []string, timeoutSecond int) error {
-	_, err := GetInstance().Select(taskDb)
-	if err != nil {
-		return err
-	}
-	_, err = GetInstance().SetListToTailAndExpire(strconv.FormatInt(taskID, 10), val, timeoutSecond)
+	_, err := GetInstance().SetListToTailAndExpireWitchDb(taskDb, strconv.FormatInt(taskID, 10), val, timeoutSecond)
 	if err != nil {
 		return err
 	}
@@ -304,27 +188,15 @@ func SetTaskDataList(taskID int64, val []string, timeoutSecond int) error {
 }
 
 func GetTaskDataListByRange(taskID int64, start int, stop int) (val []string, err error) {
-	_, err = GetInstance().Select(taskDb)
-	if err != nil {
-		return nil, err
-	}
-	return GetInstance().GetListByRange(strconv.FormatInt(taskID, 10), start, stop)
+	return GetInstance().GetListByRangeWitchDb(taskDb, strconv.FormatInt(taskID, 10), start, stop)
 }
 
 func GetTaskDataListLen(taskID int64) (len int, err error) {
-	_, err = GetInstance().Select(taskDb)
-	if err != nil {
-		return 0, err
-	}
-	return GetInstance().GetListLen(strconv.FormatInt(taskID, 10))
+	return GetInstance().GetListLenWitchDb(taskDb, strconv.FormatInt(taskID, 10))
 }
 
 func IsTaskDataTimeout(taskID int64) (bool, error) {
-	_, err := GetInstance().Select(taskDb)
-	if err != nil {
-		return false, err
-	}
-	ttl, err := GetInstance().GetTTL(strconv.FormatInt(taskID, 10))
+	ttl, err := GetInstance().GetTTLWitchDb(taskDb, strconv.FormatInt(taskID, 10))
 	if err != nil {
 		return false, err
 	}
@@ -336,18 +208,14 @@ func IsTaskDataTimeout(taskID int64) (bool, error) {
 }
 
 func RenewTaskDataTimout(taskID int64, timeoutSecond int) error {
-	_, err := GetInstance().Select(taskDb)
-	if err != nil {
-		return err
-	}
-	if _, err := GetInstance().SetExpire(strconv.FormatInt(taskID, 10), timeoutSecond); err != nil {
+	if _, err := GetInstance().SetExpireWitchDb(taskDb, strconv.FormatInt(taskID, 10), timeoutSecond); err != nil {
 		return err
 	}
 	return nil
 }
 
 func getSetStringVals(key string) ([]string, error) {
-	vals, err := GetInstance().GetSetMembers(key)
+	vals, err := GetInstance().GetSetMembersWitchDb(archiveDb, key)
 	strVals := make([]string, 0)
 	for _, o := range vals {
 		if str, ok := o.([]uint8); ok {
