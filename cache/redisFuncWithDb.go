@@ -7,7 +7,7 @@ import (
 func (p *RedisPool) DoWitchDb(db int, command string, args ...interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +17,7 @@ func (p *RedisPool) DoWitchDb(db int, command string, args ...interface{}) (inte
 func (p *RedisPool) SetStringWitchDb(db int, key string, value interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (p *RedisPool) SetStringWitchDb(db int, key string, value interface{}) (int
 func (p *RedisPool) GetStringWitchDb(db int, key string) (string, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return "", err
 	}
@@ -37,7 +37,7 @@ func (p *RedisPool) GetStringWitchDb(db int, key string) (string, error) {
 func (p *RedisPool) GetBytesWitchDb(db int, key string) ([]byte, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (p *RedisPool) GetBytesWitchDb(db int, key string) ([]byte, error) {
 func (p *RedisPool) GetIntWitchDb(db int, key string) (int, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return 0, err
 	}
@@ -57,7 +57,7 @@ func (p *RedisPool) GetIntWitchDb(db int, key string) (int, error) {
 func (p *RedisPool) GetInt64WitchDb(db int, key string) (int64, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return 0, err
 	}
@@ -67,7 +67,7 @@ func (p *RedisPool) GetInt64WitchDb(db int, key string) (int64, error) {
 func (p *RedisPool) DelKeyWitchDb(db int, key string) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (p *RedisPool) DelKeyWitchDb(db int, key string) (interface{}, error) {
 func (p *RedisPool) ExpireKeyWitchDb(db int, key string, seconds int64) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (p *RedisPool) ExpireKeyWitchDb(db int, key string, seconds int64) (interfa
 func (p *RedisPool) KeysWitchDb(db int, pattern string) ([]string, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (p *RedisPool) KeysWitchDb(db int, pattern string) ([]string, error) {
 func (p *RedisPool) KeysByteSlicesWitchDb(db int, pattern string) ([][]byte, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (p *RedisPool) KeysByteSlicesWitchDb(db int, pattern string) ([][]byte, err
 func (p *RedisPool) SetHashMapWitchDb(db int, key string, fieldValue map[string]interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -117,17 +117,28 @@ func (p *RedisPool) SetHashMapWitchDb(db int, key string, fieldValue map[string]
 func (p *RedisPool) GetHashMapStringWitchDb(db int, key string) (map[string]string, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
 	return redis.StringMap(conn.Do("HGETALL", key))
 }
 
+func (p *RedisPool) MgetHashMapStringWitchDb(db int, keys []string) (map[string]string, error) {
+	conn := p.Pool.Get()
+	defer conn.Close()
+	_,err:=conn.Do("select", db)
+	if err != nil {
+		return nil, err
+	}
+	return redis.StringMap(conn.Do("MGET", redis.Args{}.AddFlat(keys)))
+}
+
+
 func (p *RedisPool) GetHashMapIntWitchDb(db int, key string) (map[string]int, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +148,7 @@ func (p *RedisPool) GetHashMapIntWitchDb(db int, key string) (map[string]int, er
 func (p *RedisPool) GetHashStringWitchDb(db int, key string, field string) (string, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return "", err
 	}
@@ -147,7 +158,7 @@ func (p *RedisPool) GetHashStringWitchDb(db int, key string, field string) (stri
 func (p *RedisPool) GetHashIntWitchDb(db int, key string, field string) (int, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return 0, err
 	}
@@ -157,7 +168,7 @@ func (p *RedisPool) GetHashIntWitchDb(db int, key string, field string) (int, er
 func (p *RedisPool) AddtoSetWitchDb(db int, key string, vals ...string) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +184,7 @@ func (p *RedisPool) AddtoSetWitchDb(db int, key string, vals ...string) (interfa
 func (p *RedisPool) RemoveFrmSetWitchDb(db int, key string, vals ...string) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +199,7 @@ func (p *RedisPool) RemoveFrmSetWitchDb(db int, key string, vals ...string) (int
 func (p *RedisPool) GetSetMembersWitchDb(db int, key string) ([]interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +209,7 @@ func (p *RedisPool) GetSetMembersWitchDb(db int, key string) ([]interface{}, err
 func (p *RedisPool) GetSetInterWitchDb(db int, key1 string, key2 string) ([]interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +219,7 @@ func (p *RedisPool) GetSetInterWitchDb(db int, key1 string, key2 string) ([]inte
 func (p *RedisPool) SetExpireWitchDb(db int, key string, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +229,7 @@ func (p *RedisPool) SetExpireWitchDb(db int, key string, ttl int) (interface{}, 
 func (p *RedisPool) SetPersistWitchDb(db int, key string) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +239,7 @@ func (p *RedisPool) SetPersistWitchDb(db int, key string) (interface{}, error) {
 func (p *RedisPool) GetTTLWitchDb(db int, key string) (int64, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return 0, err
 	}
@@ -238,7 +249,7 @@ func (p *RedisPool) GetTTLWitchDb(db int, key string) (int64, error) {
 func (p *RedisPool) SetHashAndExpireWitchDb(db int, key string, fieldValue map[string]interface{}, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +263,7 @@ func (p *RedisPool) SetHashAndExpireWitchDb(db int, key string, fieldValue map[s
 func (p *RedisPool) SetStringAndExpireWitchDb(db int, key string, val interface{}, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +273,7 @@ func (p *RedisPool) SetStringAndExpireWitchDb(db int, key string, val interface{
 func (p *RedisPool) AppendListToHeadWitchDb(db int, key string, val interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +289,7 @@ func (p *RedisPool) AppendListToHeadWitchDb(db int, key string, val interface{})
 func (p *RedisPool) SetListToHeadWitchDb(db int, key string, val interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -304,7 +315,7 @@ func (p *RedisPool) SetListToHeadWitchDb(db int, key string, val interface{}) (i
 func (p *RedisPool) AppendListToHeadAndExpireWitchDb(db int, key string, val interface{}, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +334,7 @@ func (p *RedisPool) AppendListToHeadAndExpireWitchDb(db int, key string, val int
 func (p *RedisPool) SetListToHeadAndExpireWitchDb(db int, key string, val interface{}, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -352,7 +363,7 @@ func (p *RedisPool) SetListToHeadAndExpireWitchDb(db int, key string, val interf
 func (p *RedisPool) AppendListToTailWitchDb(db int, key string, val interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -368,7 +379,7 @@ func (p *RedisPool) AppendListToTailWitchDb(db int, key string, val interface{})
 func (p *RedisPool) SetListToTailWitchDb(db int, key string, val interface{}) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -394,7 +405,7 @@ func (p *RedisPool) SetListToTailWitchDb(db int, key string, val interface{}) (i
 func (p *RedisPool) AppendListToTailAndExpireWitchDb(db int, key string, val interface{}, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -413,7 +424,7 @@ func (p *RedisPool) AppendListToTailAndExpireWitchDb(db int, key string, val int
 func (p *RedisPool) SetListToTailAndExpireWitchDb(db int, key string, val interface{}, ttl int) (interface{}, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}
@@ -442,7 +453,7 @@ func (p *RedisPool) SetListToTailAndExpireWitchDb(db int, key string, val interf
 func (p *RedisPool) GetListLenWitchDb(db int, key string) (int, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return 0, err
 	}
@@ -452,7 +463,7 @@ func (p *RedisPool) GetListLenWitchDb(db int, key string) (int, error) {
 func (p *RedisPool) GetListByRangeWitchDb(db int, key string, start int, stop int) ([]string, error) {
 	conn := p.Pool.Get()
 	defer conn.Close()
-	_, err := conn.Do("select", db)
+	_,err:=conn.Do("select", db)
 	if err != nil {
 		return nil, err
 	}

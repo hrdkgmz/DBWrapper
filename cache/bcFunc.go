@@ -152,6 +152,68 @@ func GetPeerCCDetail(peer string, ccid string) (map[string]string, error) {
 	return chanCc, err
 }
 
+func GetUserByOrg(org string) ([]string, error) {
+	return getSetStringVals("org_sysusers:" + org)
+}
+
+func GetOrgDetailByOrgName(orgName string) (map[string]string, error) {
+	org, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_org_info:hash:org_name:"+orgName)
+	return org, err
+}
+
+func GetAllOrgDetail() ([]map[string]string, error) {
+	orgKeys, err := GetInstance().KeysWitchDb(archiveDb, "b_org_info:hash:org_name:*")
+	if err != nil {
+		return nil, err
+	}
+	orgDetails := make([]map[string]string, 0)
+	for _, v := range orgKeys {
+		orgdetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb,v)
+		if err != nil {
+			return nil, err
+		}
+		orgDetails = append(orgDetails, orgdetail)
+	}
+	return orgDetails, nil
+}
+
+func GetAllPeerDetail() ([]map[string]string, error) {
+	pKeys, err := GetInstance().KeysWitchDb(archiveDb, "b_peer_info:hash:peer_fullname:*")
+	if err != nil {
+		return nil, err
+	}
+	pDetails := make([]map[string]string, 0)
+	for _, v := range pKeys {
+		pdetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb,v)
+		if err != nil {
+			return nil, err
+		}
+		pDetails = append(pDetails, pdetail)
+	}
+	return pDetails, nil
+}
+
+func GetOrderDetailByName(ordName string) (map[string]string, error) {
+	ord, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_orderer_info:hash:ord_name:"+ordName)
+	return ord, err
+}
+
+func GetAllOrderDetail() ([]map[string]string, error) {
+	oKeys, err := GetInstance().KeysWitchDb(archiveDb, "b_orderer_info:hash:ord_name:*")
+	if err != nil {
+		return nil, err
+	}
+	oDetails := make([]map[string]string, 0)
+	for _, v := range oKeys {
+		odetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb,v)
+		if err != nil {
+			return nil, err
+		}
+		oDetails = append(oDetails, odetail)
+	}
+	return oDetails, nil
+}
+
 func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int) error {
 	_, err := GetInstance().SetHashAndExpireWitchDb(taskDb, strconv.FormatInt(taskID, 10), val, timeoutSecond)
 	if err != nil {
