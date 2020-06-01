@@ -107,6 +107,11 @@ func GetCCDetailById(id string) (map[string]string, error) {
 	return cc, err
 }
 
+func GetCCDetailByCCNameAndCCVer(ccName string, ccVer string) (map[string]string, error) {
+	cc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_cc_info:hash:cc_name&cc_ver:"+ccName+"&"+ccVer)
+	return cc, err
+}
+
 func GetAllCCId() ([]string, error) {
 	return getSetStringVals("ccs")
 }
@@ -168,7 +173,7 @@ func GetAllOrgDetail() ([]map[string]string, error) {
 	}
 	orgDetails := make([]map[string]string, 0)
 	for _, v := range orgKeys {
-		orgdetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb,v)
+		orgdetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb, v)
 		if err != nil {
 			return nil, err
 		}
@@ -184,7 +189,7 @@ func GetAllPeerDetail() ([]map[string]string, error) {
 	}
 	pDetails := make([]map[string]string, 0)
 	for _, v := range pKeys {
-		pdetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb,v)
+		pdetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb, v)
 		if err != nil {
 			return nil, err
 		}
@@ -205,7 +210,7 @@ func GetAllOrderDetail() ([]map[string]string, error) {
 	}
 	oDetails := make([]map[string]string, 0)
 	for _, v := range oKeys {
-		odetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb,v)
+		odetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb, v)
 		if err != nil {
 			return nil, err
 		}
@@ -213,6 +218,68 @@ func GetAllOrderDetail() ([]map[string]string, error) {
 	}
 	return oDetails, nil
 }
+
+func GetAllCCNames() ([]string, error) {
+	return getSetStringVals("ccnames")
+}
+
+func GetAllCCVersByCCName(ccName string) ([]string, error) {
+	return getSetStringVals("ccname_vers:" + ccName)
+}
+
+func GetCCDetailsByCCName(ccName string) ([]map[string]string, error) {
+	ccVers, err := GetAllCCVersByCCName(ccName)
+	if err != nil {
+		return nil, err
+	}
+	ccDetails := make([]map[string]string, 0)
+	for _, v := range ccVers {
+		ccDetail, err := GetCCDetailByCCNameAndCCVer(ccName, v)
+		if err != nil {
+			return nil, err
+		}
+		ccDetails = append(ccDetails, ccDetail)
+	}
+	return ccDetails, nil
+}
+
+func GetChannelByPeer(peerFullname string) ([]string, error) {
+	return getSetStringVals("peer_chans:" + peerFullname)
+}
+
+func GetAllPeerCCDetail() ([]map[string]string, error) {
+	pcKeys, err := GetInstance().KeysWitchDb(archiveDb, "s_peer_cc:hash:peer_fullname&cc_id:*")
+	if err != nil {
+		return nil, err
+	}
+	pcDetails := make([]map[string]string, 0)
+	for _, v := range pcKeys {
+		pcDetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb, v)
+		if err != nil {
+			return nil, err
+		}
+		pcDetails = append(pcDetails, pcDetail)
+	}
+	return pcDetails, nil
+}
+
+func GetAllChannelCCDetail() ([]map[string]string, error) {
+	chanCCKeys, err := GetInstance().KeysWitchDb(archiveDb, "s_channel_cc:hash:chan_name&cc_id:*")
+	if err != nil {
+		return nil, err
+	}
+	chanCCDetails := make([]map[string]string, 0)
+	for _, v := range chanCCKeys {
+		chanCCDetail, err := GetInstance().GetHashMapStringWitchDb(archiveDb, v)
+		if err != nil {
+			return nil, err
+		}
+		chanCCDetails = append(chanCCDetails, chanCCDetail)
+	}
+	return chanCCDetails, nil
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func SetTaskDataHash(taskID int64, val map[string]interface{}, timeoutSecond int) error {
 	_, err := GetInstance().SetHashAndExpireWitchDb(taskDb, strconv.FormatInt(taskID, 10), val, timeoutSecond)
