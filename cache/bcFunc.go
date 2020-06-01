@@ -263,6 +263,22 @@ func GetAllPeerCCDetail() ([]map[string]string, error) {
 	return pcDetails, nil
 }
 
+func GetPeerCCDetailsByCCID(ccid string) ([]map[string]string, error) {
+	pcKeys, err := GetPeersByCCID(ccid)
+	if err != nil {
+		return nil, err
+	}
+	pcDetails := make([]map[string]string, 0)
+	for _, v := range pcKeys {
+		pcDetail, err := GetPeerCCDetail(v, ccid)
+		if err != nil {
+			return nil, err
+		}
+		pcDetails = append(pcDetails, pcDetail)
+	}
+	return pcDetails, nil
+}
+
 func GetAllChannelCCDetail() ([]map[string]string, error) {
 	chanCCKeys, err := GetInstance().KeysWitchDb(archiveDb, "s_channel_cc:hash:chan_name&cc_id:*")
 	if err != nil {
@@ -277,6 +293,22 @@ func GetAllChannelCCDetail() ([]map[string]string, error) {
 		chanCCDetails = append(chanCCDetails, chanCCDetail)
 	}
 	return chanCCDetails, nil
+}
+
+func GetChanCCDetailsByCCID(ccid string) ([]map[string]string, error) {
+	pcKeys, err := GetChansByCCID(ccid)
+	if err != nil {
+		return nil, err
+	}
+	pcDetails := make([]map[string]string, 0)
+	for _, v := range pcKeys {
+		pcDetail, err := GetChanCCDetail(v, ccid)
+		if err != nil {
+			return nil, err
+		}
+		pcDetails = append(pcDetails, pcDetail)
+	}
+	return pcDetails, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

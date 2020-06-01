@@ -34,6 +34,19 @@ func main(){
 		fmt.Println(v)
 	}
 	fmt.Println("\n")
+
+	pp,_:=cache.GetPeerCCDetailsByCCID("99")
+	for _,v:=range pp{
+		fmt.Println(v)
+	}
+	fmt.Println("\n")
+
+	cc,_:=cache.GetChanCCDetailsByCCID("12345")
+	for _,v:=range cc{
+		fmt.Println(v)
+	}
+	fmt.Println("\n")
+
 	//c:=cache.GetInstance()
 	//db.SetMysqlParas("172.28.62.228:3306", "bctest", "root","root", "utf8",2000,1000)
 	//rand.Seed(time.Now().Unix())
