@@ -3,6 +3,7 @@ package cache
 import (
 	"errors"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -220,7 +221,16 @@ func GetAllOrderDetail() ([]map[string]string, error) {
 }
 
 func GetAllCCNames() ([]string, error) {
-	return getSetStringVals("ccnames")
+	ccKeys, err := GetInstance().KeysWitchDb(archiveDb, "b_cc_info:hash:cc_name&cc_ver:*")
+	if err != nil {
+		return nil, err
+	}
+	ccNames := make([]string, 0)
+	for _, v := range ccKeys {
+		cc := strings.TrimPrefix(v, "b_cc_info:hash:cc_name&cc_ver:")
+		ccNames = append(ccNames, strings.Split(cc, "&")[0])
+	}
+	return RemoveDuplicateElement(ccNames), nil
 }
 
 func GetAllCCVersByCCName(ccName string) ([]string, error) {
@@ -387,4 +397,16 @@ func getSetStringVals(key string) ([]string, error) {
 		return nil, errors.New("insufficient number of values")
 	}
 	return strVals, err
+}
+
+func RemoveDuplicateElement(strs []string) []string {
+	result := make([]string, 0, len(strs))
+	temp := map[string]struct{}{}
+	for _, item := range strs {
+		if _, ok := temp[item]; !ok {
+			temp[item] = struct{}{}
+			result = append(result, item)
+		}
+	}
+	return result
 }
