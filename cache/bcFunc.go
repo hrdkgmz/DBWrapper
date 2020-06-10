@@ -26,14 +26,17 @@ func GetOrgBySysUser(sysUser string) (string, error) {
 	return org, err
 }
 
+//组织下的节点
 func GetPeerByOrg(org string) ([]string, error) {
 	return getSetStringVals("org_peers:" + org)
 }
 
+//加入通道的节点 s_channel_peer
 func GetPeerByChannel(channel string) ([]string, error) {
 	return getSetStringVals("chan_peers:" + channel)
 }
 
+//一个组织下加入通道的节点
 func GetCommonPeerByOrgChannel(org string, channel string) ([]string, error) {
 	peer, err := GetInstance().GetSetInterWitchDb(archiveDb, "chan_peers:"+channel, "org_peers:"+org)
 	strVals := make([]string, 0)
@@ -48,14 +51,17 @@ func GetCommonPeerByOrgChannel(org string, channel string) ([]string, error) {
 	return strVals, err
 }
 
+//查询链码安装到哪些peer上 s_peer_cc
 func GetPeersByCCID(ccid string) ([]string, error) {
 	return getSetStringVals("cc_peers:" + ccid)
 }
 
+//查询链码实例化在哪些通道上 s_channel_peer
 func GetChansByCCID(ccid string) ([]string, error) {
 	return getSetStringVals("cc_chans:" + ccid)
 }
 
+//通过ccid获取ccname和ccver
 func GetCCInfoByCCID(ccid string) (string, string, error) {
 	name, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_cc_info:hash:cc_id:"+ccid, "cc_name")
 	if err != nil {
@@ -83,10 +89,12 @@ func GetChanDetailByName(name string) (map[string]string, error) {
 	return channel, err
 }
 
+//获取所有通道名
 func GetAllChanName() ([]string, error) {
 	return getSetStringVals("channels")
 }
 
+//获取所有通道信息
 func GetAllChanDetail() ([]map[string]string, error) {
 	chanNames, err := GetAllChanName()
 	if err != nil {
@@ -103,6 +111,7 @@ func GetAllChanDetail() ([]map[string]string, error) {
 	return chanDetails, nil
 }
 
+//通过ccid得到全量信息 b_cc_info
 func GetCCDetailById(id string) (map[string]string, error) {
 	cc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_cc_info:hash:cc_id:"+id)
 	return cc, err
@@ -117,6 +126,7 @@ func GetAllCCId() ([]string, error) {
 	return getSetStringVals("ccs")
 }
 
+//所有链码信息 b_cc_info
 func GetAllCCDetail() ([]map[string]string, error) {
 	ccIds, err := GetAllCCId()
 	if err != nil {
@@ -133,26 +143,31 @@ func GetAllCCDetail() ([]map[string]string, error) {
 	return ccDetails, nil
 }
 
+//通过peername获得peer全量信息 b_peer_info
 func GetPeerDetailByName(name string) (map[string]string, error) {
 	peer, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "b_peer_info:hash:peer_fullname:"+name)
 	return peer, err
 }
 
+//加入通道的一个节点的一条记录 s_channel_peer
 func GetChanPeerDetail(channel string, peer string) (map[string]string, error) {
 	chanPeer, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_channel_peer:hash:chan_name&peer_fullname:"+channel+"&"+peer)
 	return chanPeer, err
 }
 
+//获取peer加入通道的时间 s_channel_peer
 func GetPeerJoinTime(channel string, peer string) (string, error) {
 	time, err := GetInstance().GetHashStringWitchDb(archiveDb, "s_channel_peer:hash:chan_name&peer_fullname:"+channel+"&"+peer, "join_time")
 	return time, err
 }
 
+//在通道中已实例化的一个链码的一条记录 s_channel_cc
 func GetChanCCDetail(channel string, ccid string) (map[string]string, error) {
 	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_channel_cc:hash:chan_name&cc_id:"+channel+"&"+ccid)
 	return chanCc, err
 }
 
+//节点安装在链码链码上的一条记录 s_peer_cc
 func GetPeerCCDetail(peer string, ccid string) (map[string]string, error) {
 	chanCc, err := GetInstance().GetHashMapStringWitchDb(archiveDb, "s_peer_cc:hash:peer_fullname&cc_id:"+peer+"&"+ccid)
 	return chanCc, err
@@ -220,6 +235,7 @@ func GetAllOrderDetail() ([]map[string]string, error) {
 	return oDetails, nil
 }
 
+//所有ccname b_cc_info
 func GetAllCCNames() ([]string, error) {
 	ccKeys, err := GetInstance().KeysWitchDb(archiveDb, "b_cc_info:hash:cc_name&cc_ver:*")
 	if err != nil {
@@ -233,10 +249,12 @@ func GetAllCCNames() ([]string, error) {
 	return RemoveDuplicateElement(ccNames), nil
 }
 
+//一个ccname的所有ccver
 func GetAllCCVersByCCName(ccName string) ([]string, error) {
 	return getSetStringVals("ccname_vers:" + ccName)
 }
 
+//通过链码名获取历史版本全部信息 b_cc_info
 func GetCCDetailsByCCName(ccName string) ([]map[string]string, error) {
 	ccVers, err := GetAllCCVersByCCName(ccName)
 	if err != nil {
@@ -253,6 +271,7 @@ func GetCCDetailsByCCName(ccName string) ([]map[string]string, error) {
 	return ccDetails, nil
 }
 
+//一个peer加入的所有通道 s_channel_peer
 func GetChannelByPeer(peerFullname string) ([]string, error) {
 	return getSetStringVals("peer_chans:" + peerFullname)
 }
@@ -319,6 +338,27 @@ func GetChanCCDetailsByCCID(ccid string) ([]map[string]string, error) {
 		pcDetails = append(pcDetails, pcDetail)
 	}
 	return pcDetails, nil
+}
+
+func GetCCIDByCCNameAndVer(ccName string, ccVer string) (string, error) {
+	ccId, err := GetInstance().GetHashStringWitchDb(archiveDb, "b_cc_info:hash:cc_name&cc_ver:"+ccName+"&"+ccVer, "cc_id")
+	return ccId, err
+}
+
+func GetCCIDsByCCName(ccName string) ([]string, error) {
+	ccKeys, err := GetInstance().KeysWitchDb(archiveDb, "b_cc_info:hash:cc_name&cc_ver:"+ccName+"*")
+	if err != nil {
+		return nil, err
+	}
+	ccIds := make([]string, 0)
+	for _, v := range ccKeys {
+		ccId, err := GetInstance().GetHashStringWitchDb(archiveDb, v, "cc_id")
+		if err != nil {
+			return nil, err
+		}
+		ccIds = append(ccIds, ccId)
+	}
+	return ccIds, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
