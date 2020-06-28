@@ -9,4 +9,4 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible
 )
 
-replace dm v0.0.0 => ../../../dm
+replace dm v0.0.0 => ./dm
