@@ -2,17 +2,24 @@ package main
 
 import (
 	"fmt"
-	"github.com/hrdkgmz/dbWrapper/cache"
+	"github.com/hrdkgmz/dbWrapper/dmdb"
 )
+
 func main(){
 
-	cache.SetRedisParas("172.28.62.228:6379","",1,100,100)
+	dmdb.GetInstance()
+	ss, _:= dmdb.GetInstance().Query("select * from l_blk_data;")
+	fmt.Println(ss)
+	//tm:=time.Unix(0,1591943118000000000)
+	//fmt.Println(tm)
 
-	//orgKeys, _ := cache.GetInstance().KeysWitchDb(0, "b_org_info:hash:org_name:*")
-	//fmt.Println(orgKeys)
-
-	fmt.Println(cache.GetCCIDsByCCName("example3"))
-	fmt.Println("\n")
+	//cache.SetRedisParas("172.28.62.228:6379","",1,100,100)
+	//
+	////orgKeys, _ := cache.GetInstance().KeysWitchDb(0, "b_org_info:hash:org_name:*")
+	////fmt.Println(orgKeys)
+	//
+	//fmt.Println(cache.GetCCIDsByCCName("example3"))
+	//fmt.Println("\n")
 
 	//fmt.Println(cache.GetAllCCNames())
 	//fmt.Println("\n")
